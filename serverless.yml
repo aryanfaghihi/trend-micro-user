@@ -1,4 +1,7 @@
-service: trend-micro-user
+service: 
+  name: trend-micro-user
+  awsKmsKeyArn: arn:aws:kms:ap-southeast-2:602381305227:key/d4bced52-ba29-489d-b4d8-96e017d4e69a
+
 app: trend-micro-user
 org: marvel
 
@@ -7,6 +10,8 @@ frameworkVersion: "2"
 functions:
   createUser:
     handler: createUser.create
+    environment: 
+      CMK: d4bced52-ba29-489d-b4d8-96e017d4e69a
     events:
       - http:
           path: users/create
