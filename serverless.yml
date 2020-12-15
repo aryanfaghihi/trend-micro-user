@@ -14,8 +14,16 @@ functions:
       CMK: d4bced52-ba29-489d-b4d8-96e017d4e69a
     events:
       - http:
-          path: users/create
+          path: users
           method: post
+
+  getUser:
+    handler: getUser.get
+    events:
+      - http:
+          path: users/{id}
+          method: get
+
 
 provider:
   name: aws
