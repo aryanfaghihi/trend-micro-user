@@ -1,10 +1,6 @@
 "use strict";
-
-const { v4: uuidv4, validate } = require("uuid");
+const { v4: uuidv4 } = require("uuid");
 const AWS = require("aws-sdk");
-
-const dynamoDb = new AWS.DynamoDB.DocumentClient();
-const kms = new AWS.KMS();
 
 module.exports.create = (event, context, callback) => {
   const body = JSON.parse(event.body);
@@ -24,13 +20,14 @@ module.exports.create = (event, context, callback) => {
     data["id"] = uuidv4();
     data["credentials"] = credentials;
 
+    const dynamoDb = new AWS.DynamoDB.DocumentClient();
     const userEntry = {
       TableName: process.env.USERS_TABLE,
       Item: data,
     };
 
     dynamoDb.put(userEntry, (err) => {
-      delete data["credentials"]
+      delete data["credentials"];
       if (err)
         callback(null, {
           statusCode: 500,
@@ -47,6 +44,8 @@ module.exports.create = (event, context, callback) => {
 
 // source is plaintext
 async function encrypt(text) {
+  const kms = new AWS.KMS();
+
   const params = {
     KeyId: process.env.CMK,
     Plaintext: text,
@@ -69,3 +68,9 @@ function isInvalid(data) {
     typeof data.email !== "string"
   );
 }
+
+module.exports.getAWS = () => {
+  return AWS;
+};
+module.exports.isInvalid = isInvalid;
+module.exports.encrypt = encrypt;

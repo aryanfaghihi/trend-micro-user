@@ -22,11 +22,11 @@ test("test success user retrieval", (done) => {
       expect(err).toBe(null);
       expect(result.statusCode).toBe(200);
       expect(result.body).toBe("true");
+      AWS.restore("DynamoDB");
       done();
     }
   );
 
-  AWS.restore("DynamoDB");
 });
 
 test("test missing user retrieval", (done) => {
@@ -49,11 +49,11 @@ test("test missing user retrieval", (done) => {
       expect(err).toBe(null);
       expect(result.statusCode).toBe(200);
       expect(result.body).toBe("false");
+      AWS.restore("DynamoDB");
       done();
     }
   );
 
-  AWS.restore("DynamoDB");
 });
 
 test("test fail user retrieval", (done) => {
@@ -74,9 +74,9 @@ test("test fail user retrieval", (done) => {
     null,
     (err, result) => {
       expect(err).toBe("Something went wrong");
+      AWS.restore("DynamoDB");
       done();
     }
   );
 
-  AWS.restore("DynamoDB");
 });
