@@ -21,5 +21,5 @@ Payload
 
 ## Retrieve a user
 ```
-POST https://wiy2cw8bz2.execute-api.ap-southeast-2.amazonaws.com/dev/users/{id}
+GET https://wiy2cw8bz2.execute-api.ap-southeast-2.amazonaws.com/dev/users/{id}
 ```
