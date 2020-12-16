@@ -7,8 +7,8 @@ test("test success user retrieval", (done) => {
   process.env["USERS_TABLE"] = "USERS_TABLE";
 
   AWS.setSDKInstance(getAWS());
-  AWS.mock("DynamoDB", "getItem", (params, callback) => {
-    callback(null, params.Key.id.S === userId);
+  AWS.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
+    callback(null, params.Key.id === userId);
   });
 
   get(
@@ -22,7 +22,7 @@ test("test success user retrieval", (done) => {
       expect(err).toBe(null);
       expect(result.statusCode).toBe(200);
       expect(result.body).toBe("true");
-      AWS.restore("DynamoDB");
+      AWS.restore("DynamoDB.DocumentClient");
       done();
     }
   );
@@ -34,8 +34,8 @@ test("test missing user retrieval", (done) => {
   process.env["USERS_TABLE"] = "USERS_TABLE";
 
   AWS.setSDKInstance(getAWS());
-  AWS.mock("DynamoDB", "getItem", (params, callback) => {
-    callback(null, params.Key.id.S !== userId);
+  AWS.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
+    callback(null, params.Key.id !== userId);
   });
 
   get(
@@ -49,7 +49,7 @@ test("test missing user retrieval", (done) => {
       expect(err).toBe(null);
       expect(result.statusCode).toBe(200);
       expect(result.body).toBe("false");
-      AWS.restore("DynamoDB");
+      AWS.restore("DynamoDB.DocumentClient");
       done();
     }
   );
@@ -61,7 +61,7 @@ test("test fail user retrieval", (done) => {
   process.env["USERS_TABLE"] = "USERS_TABLE";
 
   AWS.setSDKInstance(getAWS());
-  AWS.mock("DynamoDB", "getItem", (params, callback) => {
+  AWS.mock("DynamoDB.DocumentClient", "get", (params, callback) => {
     callback("Something went wrong");
   });
 
@@ -74,7 +74,7 @@ test("test fail user retrieval", (done) => {
     null,
     (err, result) => {
       expect(err).toBe("Something went wrong");
-      AWS.restore("DynamoDB");
+      AWS.restore("DynamoDB.DocumentClient");
       done();
     }
   );
