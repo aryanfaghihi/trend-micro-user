@@ -4,7 +4,7 @@ const AWS = require("aws-sdk");
 
 module.exports.create = (event, context, callback) => {
   const body = JSON.parse(event.body);
-  const data = body.data || {};
+  const data = body.data;
 
   if (isInvalid(data)) {
     callback(null, {
@@ -16,30 +16,30 @@ module.exports.create = (event, context, callback) => {
     return;
   }
 
-  encrypt(data.credentials).then((credentials) => {
-    data["id"] = uuidv4();
-    data["credentials"] = credentials;
+  encrypt(data.credentials)
+    .then((credentials) => {
+      data["id"] = uuidv4();
+      data["credentials"] = credentials;
 
-    const dynamoDb = new AWS.DynamoDB.DocumentClient();
-    const userEntry = {
-      TableName: process.env.USERS_TABLE,
-      Item: data,
-    };
+      const dynamoDb = new AWS.DynamoDB.DocumentClient();
+      const userEntry = {
+        TableName: process.env.USERS_TABLE,
+        Item: data,
+      };
 
-    dynamoDb.put(userEntry, (err) => {
-      delete data["credentials"];
-      if (err)
-        callback(null, {
-          statusCode: 500,
-          body: JSON.stringify(err),
-        });
-      else
-        callback(null, {
-          statusCode: 201,
-          body: JSON.stringify({ data: data }),
-        });
+      dynamoDb.put(userEntry, (err) => {
+        delete data["credentials"];
+        if (err) callback(err);
+        else
+          callback(null, {
+            statusCode: 201,
+            body: JSON.stringify({ data: data }),
+          });
+      });
+    })
+    .catch((err) => {
+      callback(err);
     });
-  });
 };
 
 // source is plaintext
