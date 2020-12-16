@@ -14,12 +14,8 @@ module.exports.get = function (event, context, callback) {
     TableName: process.env.USERS_TABLE,
   };
   dynamoDb.getItem(params, (err, data) => {
-    if (err) {
-      callback(null, {
-        statusCode: 500,
-        body: JSON.stringify(err),
-      });
-    } else {
+    if (err) callback(err);
+    else {
       callback(null, {
         statusCode: 200,
         body: JSON.stringify(data),
